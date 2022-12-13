@@ -1,0 +1,5 @@
+obj/
+local/
+input
+output
+__pycache__
