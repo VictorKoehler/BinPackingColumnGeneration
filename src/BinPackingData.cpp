@@ -17,19 +17,28 @@ bool ends_with_lower(const std::string& s, const std::string& end) {
 
 BinPackingData::BinPackingData(const std::string& file_path) : BinPackingData() {
     std::ifstream inp(file_path);
-    if (ends_with_lower(file_path, "bpp")) parse_bpp(inp);
-    else parse_txt(inp);
+    parse_ext_(inp, file_path);
     check_for_file_end(inp);
 }
 
-void parse_weights(std::istream& input, std::vector<double>& weights, int n) {
+void parse_weights(std::istream& input, std::vector<double>& weights, int n, int skip_every_line=0) {
     weights.clear();
     weights.reserve(n);
     while (n--) {
         double b;
         input >> b;
         weights.push_back(b);
+        for (int i = 0; i < skip_every_line; i++) {
+            input >> b;
+        }
     }
+}
+
+void BinPackingData::parse_ext_(std::istream& input, const std::string& file_path) {
+    if      (ends_with_lower(file_path, "bpp")) parse_bpp(input);
+    else if (ends_with_lower(file_path, "vbp")) parse_vbp(input);
+    else if (ends_with_lower(file_path, "txt")) parse_txt(input);
+    else throw std::runtime_error("Don't know how to parse " + file_path);
 }
 
 void BinPackingData::parse_txt(std::istream& input) {
@@ -45,16 +54,23 @@ void BinPackingData::parse_bpp(std::istream& input) {
     parse_weights(input, weights, n);
 }
 
+void BinPackingData::parse_vbp(std::istream& input) {
+    int n;
+    input >> n >> c;
+    if (n != 1) throw std::runtime_error("Unsupported input of "+std::to_string(n)+"-dimensional features");
+    input >> n;
+    parse_weights(input, weights, n, 1);
+}
+
 std::vector<BinPackingData> BinPackingData::parse_file(const std::string& file_path) {
     std::vector<BinPackingData> group;
     std::ifstream inp(file_path);
-    bool is_bpp = ends_with_lower(file_path, "bpp");
+    bool is_txt = ends_with_lower(file_path, "txt");
     int num;
-    if (is_bpp) num = 1;
-    else inp >> num;
+    if (is_txt) inp >> num;
+    else num = 1;
     while (num--) {
-        if (is_bpp) group.emplace_back().parse_bpp(inp);
-        else group.emplace_back().parse_txt(inp);
+        group.emplace_back().parse_ext_(inp, file_path);
     }
     check_for_file_end(inp);
     return group;
