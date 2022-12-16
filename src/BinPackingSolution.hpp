@@ -32,4 +32,28 @@ struct BinPackingSolution {
         }
         std::cout << "\n\n";
     }
+
+    inline bool sanity_check() const {
+        int n = is_data_present() ? data->N() : -1;
+        if (n == -1) {
+            std::cerr << "WARNING: Performing BinPackingSolution::sanity_check without cross checking data\n";
+            for (const auto& b : bins) {
+                for (const auto& i : b) {
+                    n = std::max(i, n);
+                }
+            }
+            n++;
+        }
+
+        std::vector<int> visited(n, 0);
+        for (const auto& b : bins) {
+            for (const auto& i : b) {
+                visited[i]++;
+            }
+        }
+        for (auto v : visited) {
+            if (v != 1) return false;
+        }
+        return true;
+    }
 };

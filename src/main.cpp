@@ -13,7 +13,8 @@ int main(int argc, const char** argv) {
         auto s = solve_by_kantorovitch(inst);
         std::cout << "Execution took " << tp.diff_seconds() << " seconds\n";
         s.print();
-        std::cout << "\n\n";
+        std::cout << "SANITY CHECK " << s.sanity_check() << "\n";
+        std::cout << "SOLUTION COST: " << s.get_needed_bins() << "\n\n\n";
     }
     return 0;
 }
