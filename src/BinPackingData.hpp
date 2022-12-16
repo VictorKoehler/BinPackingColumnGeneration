@@ -14,7 +14,7 @@ struct BinPackingData {
     virtual int U() const { return N(); }
 
     BinPackingData(int c, const std::vector<double>& weights, const std::string& name = "") : c(c), weights(weights), name(name) {}
-    BinPackingData() : c(0), weights({}) {}
+    BinPackingData() : BinPackingData(0, {}) {}
     BinPackingData(const std::string& file_path);
 
     void parse_ext_(std::istream& input, const std::string& file_path);

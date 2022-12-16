@@ -19,6 +19,10 @@ BinPackingData::BinPackingData(const std::string& file_path) : BinPackingData() 
     std::ifstream inp(file_path);
     parse_ext_(inp, file_path);
     check_for_file_end(inp);
+    if (name.empty()) {
+        auto lp = file_path.find_last_of("/\\");
+        name = file_path.substr(lp == file_path.npos ? 0 : lp+1);
+    }
 }
 
 void parse_weights(std::istream& input, std::vector<double>& weights, int n, int skip_every_line=0) {
@@ -71,6 +75,10 @@ std::vector<BinPackingData> BinPackingData::parse_file(const std::string& file_p
     else num = 1;
     while (num--) {
         group.emplace_back().parse_ext_(inp, file_path);
+        if (group.back().name.empty()) {
+            auto lp = file_path.find_last_of("/\\");
+            group.back().name = file_path.substr(lp == file_path.npos ? 0 : lp+1);
+        }
     }
     check_for_file_end(inp);
     return group;
