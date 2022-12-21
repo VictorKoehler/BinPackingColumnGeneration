@@ -54,5 +54,6 @@ BinPackingSolution solve_by_kantorovitch(const BinPackingData& data, int time_li
             if (X_[i][j] > 0.5) solution.bins.back().push_back(i);
         }
     }
+    env.end();
     return solution;
 }

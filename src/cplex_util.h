@@ -131,8 +131,8 @@ typedef enum __cut_policy { NO_CUTS, ONLY_ROOT_CUTS, FULL_CUTS } cut_policy;
 
 #define CPLEX_CONFIG(cplex, time_Limit, disable_optimizations) { \
 	if (disable_optimizations) { \
-		cplex.setParam(IloCplex::TiLim, time_Limit); \
-		cplex.setParam(IloCplex::Threads, 1); \
+		cplex.setParam(IloCplex::Param::TimeLimit, time_Limit); \
+		cplex.setParam(IloCplex::Param::Threads, 1); \
 		CPLEX_DISABLE_CUTS(cplex); \
 		CPLEX_DISABLE_PRESOLVER(cplex); \
 	} \

@@ -14,7 +14,7 @@ int main(int argc, const char** argv) {
         std::cout << "Execution took " << tp.diff_seconds() << " seconds\n";
         s.print();
         std::cout << "SANITY CHECK " << s.sanity_check() << "\n";
-        std::cout << "SOLUTION COST: " << s.get_needed_bins() << "\n\n\n";
+        std::cout << "SOLUTION COST: " << s.get_needed_bins() << "\n\n=========\n\n";
     }
     return 0;
 }

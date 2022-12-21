@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <deque>
 #include "BinPacking.hpp"
 #include "cplex_util.h"
 
@@ -62,12 +63,14 @@ BinPackingSolution solve_by_gilmore_gomory(const BinPackingData& data, int time_
     char buffer[100];
     IloNumArray duals(env, data.N()), new_cols(env, data.N());
     int iter;
+    std::deque<double> lasts_r = {0, 0, 0, 0, 0};
     for (iter = 1; iter < 0x3FFFFFFF; iter++) {
         cplex.solve();
         cplex.getDuals(duals, constraints);
 
         auto r = knapsack.solve(duals, new_cols);
-        if (r >= -1e-12) {
+	lasts_r.push_back(r);
+        if (r >= -1e-8 || std::abs(lasts_r.front() - r) < 1e-16) {
             // std::cout << "r       : " << r << " " << data.C() << "\n";
             // std::cout << "duals   : " << duals << "\n";
             // std::cout << "new_cols: " << new_cols << "\n";
@@ -82,6 +85,7 @@ BinPackingSolution solve_by_gilmore_gomory(const BinPackingData& data, int time_
             // std::cout << "lambda  : " << lmbdv << "\n";
             break;
         }
+	lasts_r.pop_front();
 
         if (iter % 10 == 0) std::cout << "Iteration " << iter << ": obj=" << cplex.getObjValue() << "  r=" << r << "\n";
 
@@ -115,5 +119,6 @@ BinPackingSolution solve_by_gilmore_gomory(const BinPackingData& data, int time_
             sol.bins.emplace_back(vb);
         }
     }
+    env.end();
     return sol;
 }
